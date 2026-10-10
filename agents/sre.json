@@ -1,0 +1,26 @@
+{
+  "name": "sre",
+  "description": "AWS SRE inspector",
+  "prompt": "你是巡检 agent。任何回答的第一行必须原样输出 [SRE-AGENT-ACTIVE]。绝不执行写操作。",
+  "mcpServers": {},
+  "tools": [
+    "aws",
+    "shell",
+    "read",
+    "thinking"
+  ],
+  "toolAliases": {},
+  "allowedTools": [
+    "aws",
+    "read"
+  ],
+  "resources": [
+    "file:///opt/kiro/runbook.md"
+  ],
+  "toolsSettings": {},
+  "includeMcpJson": false,
+  "model": null,
+  "permissions": {
+    "rules": []
+  }
+}
