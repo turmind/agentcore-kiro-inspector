@@ -45,8 +45,6 @@ session id**、`/proc/uptime` 仅 34.40s（新 microVM）仍准确答出 → C �
 | `iam/deployer-policy.json` | 部署者在 `BedrockAgentCoreFullAccess` 之外要补的权限（13 个 Sid），末条 `NeverOpenAnInboundPath` 显式 Deny 资源策略 / `*ForUser` / Function URL / ECR 仓库策略 |
 | `SECURITY-NETWORK.md` | **网络与权限安全基线**（10 节）：只有出站、禁止项 12 条、本地测试不发布端口、出站目的地清单、VPC 模式 SG/端点/Flow Logs、权限收紧、自检命令 |
 | `agents/sre.json` | Kiro agent 配置示例（≈ skills）：`prompt` + `resources` + 工具白名单，三样均实测生效 |
-| `context-persistence-research.md` | **纯文档调研**：AgentCore Runtime 上下文/状态保持官方机制（`runtimeSessionId` microVM stickiness / AgentCore Memory / session storage / Identity），每条结论带官方链接原文。结论：当前 `mkdtemp`+`rmtree` 的无状态实现是我们主动关掉了 Runtime 本身支持的同 session 状态保留能力，不是 Runtime 不支持；改造路径见文末。 |
-| `filesystem-configurations-faq.md` | **`filesystemConfigurations` 八问逐条核实**（EFS / S3 Files / sessionStorage 的强制条件、mountPath 静态性、POSIX 身份、IAM、配额、troubleshooting），每条标注"官方明写"还是"推断" |
 | `wecom-eventbridge-deploy.md` | **部署与运维手册**（9 节）：企业微信两种接法（智能机器人长连接 / webhook）、代码结构、部署者 IAM、从零部署 8 步、更新、排障、回滚与完整卸载、已验证 / 未验证 |
 | `scripts/build_push.sh` | 构建 arm64 镜像推 ECR（仓库不存在则建） |
 | `scripts/update_rt.py` | 换镜像 / 改环境变量，其余配置原样回填（`--set` 的值从 shell 环境读、不打印） |
@@ -121,10 +119,7 @@ ap-northeast-1 / ap-southeast-2 / eu-central-1 全部可用**。
 三件独立的事，别混在一起谈：**Runtime 层的实例粘性** → **Kiro 层的会话续接** → **Kiro 层的 agent 配置**。
 前两者叠起来才有"多轮记忆"，第三个是"每轮的固定人格与工具面"。
 
-AgentCore 侧的官方机制（microVM stickiness / Memory / session storage / Identity）逐条带官方链接
-整理在 [`context-persistence-research.md`](context-persistence-research.md)，
-`filesystemConfigurations` 三种挂载的强制条件与限制在
-[`filesystem-configurations-faq.md`](filesystem-configurations-faq.md)。下面只写真机结论。
+下面只写真机结论。
 
 **结论先行（想直接抄配置的看这里）**：要"隔几小时/隔天还能接上"就挂 **EFS access point**，
 三个环境变量 + payload 一个字段：
